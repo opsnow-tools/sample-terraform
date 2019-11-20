@@ -52,13 +52,13 @@ podTemplate(label: label, containers: [
     }
     stage("Apply to DEV?") {
       container("builder") {
-        butler.proceed([SLACK_TOKEN_OPS,SLACK_TOKEN_SEC], "Apply to DEV?", "dev")
+        butler.proceed([SLACK_TOKEN_OPS,SLACK_TOKEN_SEC], "Apply to DEV", "dev")
         timeout(time: 60, unit: "MINUTES") {
           input(message: "${butler.name} ${butler.version} to dev")
         }
       }
     }
-    stage("Apply DEV") {
+    stage("Apply to DEV") {
       container("builder") {
         try {
           butler.terraform_apply("dev", "dev")
