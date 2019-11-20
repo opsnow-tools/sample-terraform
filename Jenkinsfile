@@ -3,9 +3,9 @@ def SERVICE_NAME = "terraform"
 def IMAGE_NAME = "${SERVICE_GROUP}-${SERVICE_NAME}"
 def REPOSITORY_URL = "https://github.com/opsnow-tools/sample-terraform.git"
 def REPOSITORY_SECRET = ""
-def SLACK_TOKEN_DEV = ""
-def SLACK_TOKEN_OPS = ""
-def SLACK_TOKEN_SEC = ""
+def SLACK_TOKEN_DEV = "T95EAPLT1/B9CNR2Q9M/0c31312w1aEts55hKVBVFttG"
+def SLACK_TOKEN_OPS = "T95EAPLT1/B9CNR2Q9M/0c31312w1aEts55hKVBVFttG"
+def SLACK_TOKEN_SEC = "T95EAPLT1/B9CNR2Q9M/0c31312w1aEts55hKVBVFttG"
 
 @Library("github.com/opsnow-tools/valve-butler")
 def butler = new com.opsnow.valve.v7.Butler()
@@ -50,9 +50,9 @@ podTemplate(label: label, containers: [
         }
       }
     }
-    stage("Apply DEV?") {
+    stage("Apply to DEV?") {
       container("builder") {
-        butler.proceed(SLACK_TOKEN_OPS, "Apply DEV?", "dev")
+        butler.proceed([SLACK_TOKEN_OPS,SLACK_TOKEN_SEC], "Apply to DEV?", "dev")
         timeout(time: 60, unit: "MINUTES") {
           input(message: "${butler.name} ${butler.version} to dev")
         }
@@ -62,9 +62,9 @@ podTemplate(label: label, containers: [
       container("builder") {
         try {
           butler.terraform_apply("dev", "dev")
-          butler.success(SLACK_TOKEN_DEV, "Plan DEV")
+          butler.success([SLACK_TOKEN_DEV,SLACK_TOKEN_OPS,SLACK_TOKEN_SEC], "Apply to DEV")
         } catch (e) {
-          butler.failure(SLACK_TOKEN_DEV, "Plan DEV")
+          butler.failure([SLACK_TOKEN_DEV,SLACK_TOKEN_OPS,SLACK_TOKEN_SEC], "Apply to DEV")
           throw e
         }
       }
